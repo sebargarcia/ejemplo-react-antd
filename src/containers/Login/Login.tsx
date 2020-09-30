@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputLabel from "../../components/InputLabel";
 import styled from "styled-components";
 import { Input, Button, Row, Col, Modal } from "antd";
