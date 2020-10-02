@@ -1,6 +1,6 @@
 import { Characters } from "./character.model";
 
-export interface Paginator {
+export interface ResponseModel {
   count: number;
   next: string;
   previous: string;
