@@ -18,7 +18,6 @@ const App = () => {
   // if (userLogged) {
   //   return <User user={userLogged} onLogout={() => logout()}></User>;
   // }
-
   return <div className="App">{!isLogged ? <Login /> : <User />}</div>;
 };
 

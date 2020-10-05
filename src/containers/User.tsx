@@ -1,7 +1,13 @@
 import { Button, Card, Col, Row, Spin, Table } from "antd";
 import { TablePaginationConfig } from "antd/lib/table";
 import Axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import styled from "styled-components";
 import { createSecureContext } from "tls";
 import UserCard from "../components/UserCard";
@@ -73,6 +79,8 @@ const User = () => {
   const { data, isLoading, error, fetchApi } = useFecthCharacters();
   const { setUser, setIsLogged } = useContext(UserContext);
 
+  console.log("Loading: ", isLoading);
+
   const onLogout = () => {
     setUser(null);
     setIsLogged(false);
@@ -91,12 +99,8 @@ const User = () => {
     fetchApi(pager.current);
   };
 
-  if (error) {
-    return <p>{error}</p>;
-  }
-
   return (
-    <Row gutter={16}>
+    <Row>
       <Col span={24}>
         <h1>Mis Personajes favoritos de Star Wars</h1>
       </Col>
@@ -108,8 +112,9 @@ const User = () => {
           </Button>
         </Card>
       </Col>
-      <Col span={16}>
+      <Col span={15}>
         <Table
+          style={{ width: "100%" }}
           rowKey={(record) => record.name}
           dataSource={data.results}
           columns={columns}

@@ -25,8 +25,8 @@ const users: IUser[] = [
     nombre: "Usuario Prueba",
     apellido: "Apellido prueba",
     edad: 33,
-    password: "test123",
-    user: "test",
+    password: "a",
+    user: "a",
   },
 ];
 
@@ -106,7 +106,7 @@ const Login = () => {
           />
         </Col>
         <Col span={24} style={{ marginTop: "10px" }}>
-          <Button type="primary" onClick={() => login()}>
+          <Button type="primary" onClick={login}>
             Iniciar sesión
           </Button>
         </Col>
