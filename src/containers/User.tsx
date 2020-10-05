@@ -1,9 +1,11 @@
 import { Button, Card, Col, Row, Spin, Table } from "antd";
 import { TablePaginationConfig } from "antd/lib/table";
 import Axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { createSecureContext } from "tls";
+import UserCard from "../components/UserCard";
+import { UserContext } from "../contexts/user.context";
 import useFecthCharacters from "../hooks/useFetchCharacters.hook";
 import { Characters } from "../models/character.model";
 import { ResponseModel } from "../models/response.model";
@@ -62,13 +64,19 @@ interface Paginator {
 //   },
 // ];
 
-const User = ({ user, onLogout }: { user: IUser; onLogout: () => void }) => {
+const User = () => {
+  console.log("Component User rendered");
   const [paginator, setPaginator] = useState<Paginator>({
     current: 1,
     pageSize: 10,
   });
-
   const { data, isLoading, error, fetchApi } = useFecthCharacters();
+  const { setUser, setIsLogged } = useContext(UserContext);
+
+  const onLogout = () => {
+    setUser(null);
+    setIsLogged(false);
+  };
 
   const paginate = (pager: TablePaginationConfig) => {
     console.log("Current: " + pager.current);
@@ -94,16 +102,7 @@ const User = ({ user, onLogout }: { user: IUser; onLogout: () => void }) => {
       </Col>
       <Col span={8}>
         <Card title="Datos de usuario" style={{ width: 300, margin: "10px" }}>
-          <h2>
-            Bienvenido {user.nombre} {user.apellido}
-          </h2>
-          <p>Acabas de iniciar sesión</p>
-          <p>Datos del usuario</p>
-          <br></br>
-          <p>Nombre: {user.nombre}</p>
-          <p>Apelllido: {user.apellido}</p>
-          <p>Edad: {user.edad}</p>
-          <p>Usuario: {user.user}</p>
+          <UserCard />
           <Button type="default" onClick={() => onLogout()}>
             Cerrar sesión
           </Button>

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import InputLabel from "../../components/InputLabel";
 import styled from "styled-components";
 import { Input, Button, Row, Col, Modal } from "antd";
 import { getParsedCommandLineOfConfigFile, getShebang } from "typescript";
 import { IUser } from "../../models/user.model";
+import { UserContext } from "../../contexts/user.context";
 
 const users: IUser[] = [
   {
@@ -49,20 +50,24 @@ const DivStyled = styled.div`
   padding: 24px;
 `;
 
-const Login = ({ onLogin }: { onLogin: (userLogged: IUser) => void }) => {
-  const [user, setUser] = useState("");
+const Login = () => {
+  console.log("Component Login rendered");
+  const [userInput, setUserInput] = useState("");
   const [password, setPassword] = useState("");
   const [errorModalVisible, setErrorModalVisible] = useState(false);
 
+  const { setUser, setIsLogged } = useContext(UserContext);
+
   const login = () => {
-    if (user === "" || password === "") {
+    if (userInput === "" || password === "") {
       setErrorModalVisible(true);
       return;
     }
 
     for (const u of users) {
-      if (u.user === user && u.password === password) {
-        onLogin(u);
+      if (u.user === userInput && u.password === password) {
+        setUser(u);
+        setIsLogged(true);
         return;
       }
     }
@@ -88,8 +93,8 @@ const Login = ({ onLogin }: { onLogin: (userLogged: IUser) => void }) => {
         <Col span={12}>
           <Input
             placeholder="Usuario"
-            value={user}
-            onChange={(event) => setUser(event.target.value)}
+            value={userInput}
+            onChange={(event) => setUserInput(event.target.value)}
           />
         </Col>
         <Col span={12}>
