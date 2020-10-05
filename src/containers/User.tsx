@@ -11,6 +11,9 @@ import React, {
 import styled from "styled-components";
 import { createSecureContext } from "tls";
 import UserCard from "../components/UserCard";
+import CharacterContextProvider, {
+  CharactersContext,
+} from "../contexts/characters.context";
 import { UserContext } from "../contexts/user.context";
 import useFecthCharacters from "../hooks/useFetchCharacters.hook";
 import { Characters } from "../models/character.model";
@@ -21,25 +24,6 @@ const DivStyled = styled.div`
   border: 2px solid #000000;
   width: 50%;
 `;
-
-const columns = [
-  {
-    title: "Nombre",
-    dataIndex: "name",
-    key: "name",
-    render: (nombre: string) => <strong>{nombre}</strong>,
-  },
-  {
-    title: "Color de piel",
-    dataIndex: "skin_color",
-    key: "skin_color",
-  },
-  {
-    title: "Sexo",
-    dataIndex: "gender",
-    key: "gender",
-  },
-];
 
 interface Paginator {
   current: number;
@@ -72,14 +56,37 @@ interface Paginator {
 
 const User = () => {
   console.log("Component User rendered");
+
   const [paginator, setPaginator] = useState<Paginator>({
     current: 1,
     pageSize: 10,
   });
   const { data, isLoading, error, fetchApi } = useFecthCharacters();
   const { setUser, setIsLogged } = useContext(UserContext);
+  const { favoriteCharacters, setFavoriteCharacters } = useContext(
+    CharactersContext
+  );
 
-  console.log("Loading: ", isLoading);
+  const columns = [
+    {
+      title: "Nombre",
+      dataIndex: "name",
+      key: "name",
+      render: (nombre: string, record: Characters) => (
+        <a onClick={() => setFavoriteCharacters([record])}>{nombre}</a>
+      ),
+    },
+    {
+      title: "Color de piel",
+      dataIndex: "skin_color",
+      key: "skin_color",
+    },
+    {
+      title: "Sexo",
+      dataIndex: "gender",
+      key: "gender",
+    },
+  ];
 
   const onLogout = () => {
     setUser(null);
@@ -104,15 +111,19 @@ const User = () => {
       <Col span={24}>
         <h1>Mis Personajes favoritos de Star Wars</h1>
       </Col>
-      <Col span={8}>
-        <Card title="Datos de usuario" style={{ width: 300, margin: "10px" }}>
+      <Col span={24}>
+        <Card
+          title="Datos de usuario"
+          style={{ width: "100%", margin: "10px" }}
+        >
           <UserCard />
           <Button type="default" onClick={() => onLogout()}>
             Cerrar sesión
           </Button>
         </Card>
       </Col>
-      <Col span={15}>
+
+      <Col span={10}>
         <Table
           style={{ width: "100%" }}
           rowKey={(record) => record.name}
@@ -122,6 +133,18 @@ const User = () => {
           pagination={{ ...paginator, total: data.count ?? 0 }}
           onChange={paginate}
         />
+      </Col>
+      <Col span={10}>
+        <Card
+          title="Personajes seleccionados"
+          style={{ width: "100%", margin: "10px" }}
+        >
+          <ul>
+            {favoriteCharacters.map((character) => {
+              return <li>{character.name}</li>;
+            })}
+          </ul>
+        </Card>
       </Col>
     </Row>
   );
