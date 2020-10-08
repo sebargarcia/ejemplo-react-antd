@@ -12,6 +12,7 @@ import styled from "styled-components";
 import { createSecureContext } from "tls";
 import UserCard from "../components/UserCard";
 import CharacterContextProvider, {
+  CharactersActionsEnum,
   CharactersContext,
 } from "../contexts/characters.context";
 import { UserContext } from "../contexts/user.context";
@@ -63,7 +64,7 @@ const User = () => {
   });
   const { data, isLoading, error, fetchApi } = useFecthCharacters();
   const { setUser, setIsLogged } = useContext(UserContext);
-  const { favoriteCharacters, setFavoriteCharacters } = useContext(
+  const [stateFavCharacters, dispatchCharacters] = useContext(
     CharactersContext
   );
 
@@ -73,7 +74,16 @@ const User = () => {
       dataIndex: "name",
       key: "name",
       render: (nombre: string, record: Characters) => (
-        <a onClick={() => setFavoriteCharacters([record])}>{nombre}</a>
+        <a
+          onClick={() =>
+            dispatchCharacters({
+              type: CharactersActionsEnum.ADD_CHARACTER_1,
+              payload: record,
+            })
+          }
+        >
+          {nombre}
+        </a>
       ),
     },
     {
@@ -140,10 +150,34 @@ const User = () => {
           style={{ width: "100%", margin: "10px" }}
         >
           <ul>
-            {favoriteCharacters.map((character) => {
-              return <li>{character.name}</li>;
+            {stateFavCharacters.favoriteCharacters.map((character) => {
+              return (
+                <li>
+                  <a
+                    onClick={() =>
+                      dispatchCharacters({
+                        type: CharactersActionsEnum.DELETE_CHARACTER,
+                        payload: character,
+                      })
+                    }
+                  >
+                    {character.name}
+                  </a>
+                </li>
+              );
             })}
           </ul>
+          <Button
+            type="default"
+            onClick={() =>
+              dispatchCharacters({
+                type: CharactersActionsEnum.CLEAN_STATE,
+                payload: {} as Characters,
+              })
+            }
+          >
+            Borrar Todo
+          </Button>
         </Card>
       </Col>
     </Row>
